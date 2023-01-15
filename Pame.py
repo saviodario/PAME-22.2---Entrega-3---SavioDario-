@@ -4,13 +4,20 @@ class Sistema:
     logNomes = {"Projetos":[],"Consultores":[],"Gerentes":[]} #Titulos dos projetos e users
     
     @classmethod
-    def criarProjeto(cls, nome, tipo, consultor = None, etapas=0):
-        Sistema.logDados['Projetos'].append(cls(nome,tipo,consultor,etapas))
+    def criarProjeto(cls, nome, tipo, etapas=0):
+        gerente = str(input('Quem será o gerente deste projeto? informe o user: '))
+        consultor = str(input('Quem será o consultor deste projeto? informe o user, se nao tiver consultor somente precione enter: '))
+        if consultor == '':
+            consultor = None
+        
+        Sistema.logDados['Projetos'].append(cls(nome,tipo,consultor,gerente,etapas))
         Sistema.logNomes['Projetos'].append(nome)
-        return cls(nome,tipo,consultor,etapas)
+        return cls(nome,tipo,consultor,gerente,etapas)
     
     def removerProjeto(cls):
-        Sistema.logDados['Projetos'].remove(cls)
+        for i in Sistema.logDados['Projetos']:
+            if i.nome == cls.nome:
+                Sistema.logDados['Projetos'].remove(i)
         Sistema.logNomes['Projetos'].remove(cls.nome)
         pass
     
@@ -21,7 +28,9 @@ class Sistema:
         return cls(id, user, senha, login)
     
     def removerConsultor(cls):
-        Sistema.logDados['Consultores'].remove(cls)
+        for i in Sistema.logDados['Consultores']:
+            if i.id == cls.id:
+                Sistema.logDados['Consultores'].remove(i)
         Sistema.logNomes['Consultores'].remove(cls.user)
         pass
     
@@ -32,7 +41,13 @@ class Sistema:
         return cls(id, user, senha, login)
 
     def removerGerente(cls):
-        Sistema.logDados['Gerentes'].remove(cls)
+        for i in Sistema.logDados["Projetos"]: #verifica se existe projeto com o gerente
+            if cls.user == i.gerente:
+                print("Esse gerente está alocado em um projeto atualmente")
+                pass
+        for i in Sistema.logDados['Gerentes']:
+            if i.id == cls.id:
+                Sistema.logDados['Gerentes'].remove(i)
         Sistema.logNomes['Gerentes'].remove(cls.user)
         pass
     
@@ -70,31 +85,62 @@ class Gerente(Sistema):
     
     def modificarDados(self):
         if self.login == True:
-            i = str(input('Deseja mudar o user ou o id?: '))
-            if i == 'user':
-                self.user = str(input("Qual será o novo user?: "))
-            if i == 'id':
-                self.id = str(input("Qual será o novo id?: "))
+            self.user = str(input("Qual será o novo user?: "))
+            for i in Sistema.logDados['Gerentes']:
+                if i.id == self.id:
+                    i.user = self.user
+        else:
+            print('precisa fazer login')
         pass
     
-    def verificarProjetos():
-        #if self.login == True:
+    def verificarProjetos(self):
+        if self.login == True:
+            for i in Sistema.logDados['Projetos']:
+                if i.gerente == self.user:
+                    print(f'O gerente {self.user} está alocado no projeto {i.nome}, faltam {i.etapas} etapas')
+        else:
+            print('precisa fazer login')
         pass
     
-    def avancarProjeto():
-        #if self.login == True:
+    def avancarProjeto(self):
+        if self.login == True:
+            nome = str(input('Qual o nome do projeto que deseja avançar? '))
+            for i in Sistema.logDados['Projetos']:
+                if i.nome == nome:
+                    i.etapas = i.etapas - 1
+                else:
+                    print(f'Projeto {nome} nao consta no sistema')
+        else:
+            print('precisa fazer login')
         pass
     
-    def darVal():
-        #if self.login == True:
+    def darVal(self):
+        if self.login == True:
+            resp = str(input('aprovação concedida? sim ou nao?'))
+            if resp == 'sim':
+                return True
+            if resp == 'nao':
+                return False
+        else:
+            print('precisa de login')
         pass
     
-    def passarProjeto():
-        #if self.login == True:
+    def passarProjeto(self):
+        if self.login == True:
+            projeto = str(input('Qual o nome do projeto que será repassado? '))
+            consultor = str(input('Para qual consultor? '))
+            for i in Sistema.logDados['Projetos']:
+                if i.nome == projeto:
+                    i.consultor = consultor 
+        else:
+            print('precisa fazer login')
         pass
     
-    def entregarProjeto():
-        #if self.login == True:
+    def entregarProjeto(self):
+        if self.login == True:
+            for i in Sistema.logDados['Projetos']:
+                if i.etapas == 0:
+                    print(f'Todas as etapas do projeto {i.nome} foram concluidas, projeto entregue')                
         pass
 
 class Consultor(Sistema):
@@ -123,36 +169,58 @@ class Consultor(Sistema):
     
     def modificarDados(self):
         if self.login == True:
-            i = str(input('Deseja mudar o user ou o id?: '))
-            if i == 'user':
-                self.user = str(input("Qual será o novo user?: "))
-            if i == 'id':
-                self.id = str(input("Qual será o novo id?: "))
+            self.user = str(input("Qual será o novo user?: "))
+            for i in Sistema.logDados['Consultor']:
+                if i.id == self.id:
+                    i.user = self.user #altera o novo user no logDados
+        else:
+            print('precisa fazer login')
         pass
     
-    def verificarProjetos():
-        #if self.login == True:
+    def verificarProjetos(self):
+        if self.login == True:
+            for i in Sistema.logDados['Projetos']:
+                if i.consultor == self.user:
+                    print(f'O consulor {self.user} está alocado no projeto {i.nome}, faltam {i.etapas} etapas')
+        else:
+            print('precisa fazer login')
         pass
     
-    def avancarProjeto():
-        #if self.login == True:
+    def avancarProjeto(self):
+        if self.login == True:
+            nome = str(input('Qual o nome do projeto que deseja avançar? '))
+            gerente = str(input('Quem é o gerente responsável? '))
+            for i in Sistema.logDados['Projetos']:
+                if i.nome == nome:
+                    if gerente.darVal() == True:
+                        i.etapas = i.etapas - 1
+                    if gerente.darVal() == False:
+                        print(f'Avanço de etapa negado pelo gerente {gerente}')
+                else:
+                    print(f'Projeto {nome} nao consta no sistema')
+        else:
+            print('precisa fazer login')
         pass
     
-    def pedirRetirada():
-        #if self.login == True:
+    def pedirRetirada(self):
+        if self.login == True:
+            gerente = str(input('Quem é o gerente responsável? '))
+            if gerente.darVal() == True:
+                for i in Sistema.logDados['Projetos']:
+                    if i.consultor == self.user:
+                        i.consultor = None
+        else:
+            print('precisa fazer login')     
         pass
 
 class Projeto(Sistema):
-    def __init__(self, nome:str, tipo:str, consultor = None, gerente = str(input('Quem será o gerente deste projeto? informe o user: ')), etapas:int = 0):
-        #garantia que sempre terá gerente quando definido projeto no init
+    def __init__(self, nome:str, tipo:str, consultor, gerente, etapas:int = 0):
         self.nome = nome
         self.tipo = tipo
         self.__etapas = etapas
         self.gerente = gerente
-        self.__consultor = consultor
+        self.consultor = consultor
         self.etapas = self.tipo #ativação do setter de etapas por tipo de projeto
-        self.consultor = str(input('Quem será o consultor deste projeto? informe o user, se nao tiver consultor somente precione enter: '))
-        #ativação do setter de consultor
         pass 
     
     @property
@@ -169,17 +237,12 @@ class Projeto(Sistema):
         if tipo == 'identidade visual':
             n = 6
         self.__etapas = n
-
-    @property
-    def consultor(self):    
-        return self.__consultor
-    
-    @consultor.setter
-    def consultor(self, i):
-        self.__consultor = i
-        if i == '':
-            self.__consultor = None
         
 def main():
     "aqui terá uma função para manter o programa em loop + menus"
     pass
+
+g1 = Gerente.criarGerente('sa123','savio',254560,True)
+c1 = Consultor.criarConsulor('ca123','camilla',123456)
+p1 = Projeto.criarProjeto('Entrega3','desenvolvimento')
+
