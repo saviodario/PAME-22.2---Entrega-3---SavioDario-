@@ -1,0 +1,2 @@
+logDados = {"Projetos":[],"Consultores":[],"Gerentes":[]} #Base dict que vai receber uma lista de obj classes para seres resgatadas depois
+logNomes = {"Projetos":[],"Consultores":[],"Gerentes":[]} #Titulos dos projetos e users
