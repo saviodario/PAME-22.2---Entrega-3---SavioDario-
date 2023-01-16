@@ -1,29 +1,33 @@
-from dados.py import logDados
-from dados.py import logNomes
-class Sistema:
+class Main:
+    logDados = {"Projetos":[],"Consultores":[],"Gerentes":[]} #Base dict que vai receber uma lista de obj classes para seres resgatadas depois
+    logNomes = {"Projetos":[],"Consultores":[],"Gerentes":[]} #Titulos dos projetos e users
+    '''derante todo o código, os dados serão resgatados de log dados na seguinte estrutura:
+    for i in Sistema.logDados[*tipo de dado*]
+        if i.*comparador* == comparador
+            i -> objeto resgatado para uso e alerações'''
     @classmethod
     def criarProjeto(cls):
         nome = input('informe o nome do projeto: ')
-        tipo = input('informe o tipo de projeto: ')
+        tipo = input('informe o tipo de projeto, desenvolvimento/concepção/identidade visual ? ')
         gerente = str(input('Quem sera o gerente deste projeto? informe o user: '))
         consultor = str(input('Quem sera o consultor deste projeto? informe o user, se nao tiver consultor somente pressione enter: '))
         if consultor == '':
             consultor = None
         if tipo == 'desenvolvimento':
             etapas = 4
-        if tipo == 'concepcao':
+        if tipo == 'concepção':
             etapas = 5
         if tipo == 'identidade visual':
             etapas = 6
-        Sistema.logDados['Projetos'].append(cls(nome,tipo,consultor,gerente,etapas))
-        Sistema.logNomes['Projetos'].append(nome)
+        Main.logDados['Projetos'].append(cls(nome,tipo,consultor,gerente,etapas))
+        Main.logNomes['Projetos'].append(nome)
         return cls(nome,tipo,consultor,gerente,etapas)
     
     def removerProjeto(cls):
-        for i in Sistema.logDados['Projetos']:
+        for i in Main.logDados['Projetos']:
             if i.nome == cls.nome:
-                Sistema.logDados['Projetos'].remove(i)
-        Sistema.logNomes['Projetos'].remove(cls.nome)
+                Main.logDados['Projetos'].remove(i)
+        Main.logNomes['Projetos'].remove(cls.nome)
         pass
     
     @classmethod
@@ -31,15 +35,15 @@ class Sistema:
         id = input('Crie um id: ')
         user = input('Crie um nome de usuário: ')
         senha = input('Crie uma senha: ')
-        Sistema.logDados['Consultores'].append(cls(id, user, senha, login))
-        Sistema.logNomes['Consultores'].append(user)
+        Main.logDados['Consultores'].append(cls(id, user, senha, login))
+        Main.logNomes['Consultores'].append(user)
         return cls(id, user, senha, login)
     
     def removerConsultor(cls):
-        for i in Sistema.logDados['Consultores']:
+        for i in Main.logDados['Consultores']:
             if i.id == cls.id:
-                Sistema.logDados['Consultores'].remove(i)
-        Sistema.logNomes['Consultores'].remove(cls.user)
+                Main.logDados['Consultores'].remove(i)
+        Main.logNomes['Consultores'].remove(cls.user)
         pass
     
     @classmethod
@@ -47,31 +51,31 @@ class Sistema:
         id = input('Crie um id: ')
         user = input('Crie um nome de usuário: ')
         senha = input('Crie uma senha: ')
-        Sistema.logDados['Gerentes'].append(cls(id, user, senha, login))
-        Sistema.logNomes['Gerentes'].append(user)
+        Main.logDados['Gerentes'].append(cls(id, user, senha, login))
+        Main.logNomes['Gerentes'].append(user)
         return cls(id, user, senha, login)
 
     def removerGerente(cls):
-        for i in Sistema.logDados["Projetos"]: #verifica se existe projeto com o gerente alvo
+        for i in Main.logDados["Projetos"]: #verifica se existe projeto com o gerente alvo
             if cls.user == i.gerente:
                 print("Esse gerente está alocado em um projeto atualmente")
                 pass
-        for i in Sistema.logDados['Gerentes']:
+        for i in Main.logDados['Gerentes']:
             if i.id == cls.id:
-                Sistema.logDados['Gerentes'].remove(i)
-        Sistema.logNomes['Gerentes'].remove(cls.user)
+                Main.logDados['Gerentes'].remove(i)
+        Main.logNomes['Gerentes'].remove(cls.user)
         pass
     
     def listar():
-        for chave in Sistema.logNomes.keys():
-            print(f'{chave} atuais -> {Sistema.logNomes[chave]}')
+        for chave in Main.logNomes.keys():
+            print(f'{chave} atuais -> {Main.logNomes[chave]}')
         pass
     
     def sairPrograma():
         exit()
     
     
-class Gerente(Sistema):
+class Gerente(Main):
     def __init__(self,id:str, user:str, senha:str, login:bool = False):
         self.id = id
         self.user = user
@@ -96,7 +100,7 @@ class Gerente(Sistema):
     def modificarDados(self):
         if self.login == True:
             self.user = str(input("Qual sera o novo user?: "))
-            for i in Sistema.logDados['Gerentes']:
+            for i in Main.logDados['Gerentes']:
                 if i.id == self.id:
                     i.user = self.user
         else:
@@ -105,7 +109,7 @@ class Gerente(Sistema):
     
     def verificarProjetos(self):
         if self.login == True:
-            for i in Sistema.logDados['Projetos']:
+            for i in Main.logDados['Projetos']:
                 if i.gerente == self.user:
                     print(f'O gerente {self.user} esta alocado no projeto {i.nome}, faltam {i.etapas} etapas')
         else:
@@ -115,7 +119,7 @@ class Gerente(Sistema):
     def avancarProjeto(self):
         if self.login == True:
             nome = str(input('Qual o nome do projeto que deseja avancar? '))
-            for i in Sistema.logDados['Projetos']:
+            for i in Main.logDados['Projetos']:
                 if i.nome == nome:
                     i.avancarEtapa()
         else:
@@ -137,7 +141,7 @@ class Gerente(Sistema):
         if self.login == True:
             projeto = str(input('Qual o nome do projeto que sera repassado? '))
             consultor = str(input('Para qual consultor? '))
-            for i in Sistema.logDados['Projetos']:
+            for i in Main.logDados['Projetos']:
                 if i.nome == projeto:
                     i.consultor = consultor 
         else:
@@ -146,12 +150,12 @@ class Gerente(Sistema):
     
     def entregarProjeto(self):
         if self.login == True:
-            for i in Sistema.logDados['Projetos']:
+            for i in Main.logDados['Projetos']:
                 if i.etapas == 0:
                     print(f'Todas as etapas do projeto {i.nome} foram concluidas, projeto entregue')                
         pass
 
-class Consultor(Sistema):
+class Consultor(Main):
     def __init__(self, id:str, user:str, senha:int, login:bool = False):
         self.id = id
         self.user = user
@@ -165,9 +169,7 @@ class Consultor(Sistema):
         if user == self.user and senha == self.__senha:
             self.login = True
             print('Login feito')
-            return False
-        else:
-            print('Usuario ou senha incorretos')
+        return False
     
     def verDados(self):
         if self.login == True:
@@ -178,7 +180,7 @@ class Consultor(Sistema):
     def modificarDados(self):
         if self.login == True:
             self.user = str(input("Qual sera o novo user?: "))
-            for i in Sistema.logDados['Consultor']:
+            for i in Main.logDados['Consultor']:
                 if i.id == self.id:
                     i.user = self.user #altera o novo user no logDados
         else:
@@ -187,7 +189,7 @@ class Consultor(Sistema):
     
     def verificarProjetos(self):
         if self.login == True:
-            for i in Sistema.logDados['Projetos']:
+            for i in Main.logDados['Projetos']:
                 if i.consultor == self.user:
                     print(f'O consulor {self.user} esta alocado no projeto {i.nome}, faltam {i.etapas} etapas')
         else:
@@ -198,9 +200,9 @@ class Consultor(Sistema):
         if self.login == True:
             nome = str(input('Qual o nome do projeto que deseja avancar? '))
             gerente = str(input('Quem e o gerente responsavel? '))
-            for i in Sistema.logDados['Projetos']:
+            for i in Main.logDados['Projetos']:
                 if i.nome == nome:
-                    for j in Sistema.logDados['Gerentes']:
+                    for j in Main.logDados['Gerentes']:
                         if j.user == gerente:
                             val = j.darVal()
                             if val == True:
@@ -214,17 +216,17 @@ class Consultor(Sistema):
     def pedirRetirada(self):
         if self.login == True:
             gerente = str(input('Quem e o gerente responsavel? '))
-            for j in Sistema.logDados['Gerentes']:
+            for j in Main.logDados['Gerentes']:
                 if j.user == gerente:
                     if j.darVal() == True:
-                        for i in Sistema.logDados['Projetos']:
+                        for i in Main.logDados['Projetos']:
                             if i.consultor == self.user:
                                 i.consultor = None
         else:
             print('precisa fazer login')     
         pass
 
-class Projeto(Sistema):
+class Projeto(Main):
     def __init__(self, nome:str, tipo:str, consultor:str, gerente:str, etapas:int):
         self.nome = nome
         self.tipo = tipo
@@ -240,7 +242,7 @@ class Projeto(Sistema):
             print(f'Projeto {self.nome} está pronto pra entrega')
         
     
-class Telas(Sistema): 
+class Sistema(Main): 
     def menuPrincipal():
         while True:
             print('''
@@ -269,17 +271,17 @@ class Telas(Sistema):
                     tipo = input('\n\t\tEssa opção é inválida, gerente ou consultor? ')
                 if tipo == 'consultor':
                     id = input('informe o id do usuário: ')
-                    for i in Sistema.logDados['Consultores']:
+                    for i in Main.logDados['Consultores']:
                         if i.id==id:
                             i.logar()
-                    Telas.telaConsultor(id)
+                    Sistema.telaConsultor(id) #inicia o menu consultor para o objeto o resgatando pelo id
                     
                 if tipo == 'gerente':
                     id = input('informe o id do usuário: ')
-                    for i in Sistema.logDados['Gerentes']:
+                    for i in Main.logDados['Gerentes']:
                         if i.id==id:
                             i.logar()
-                    Telas.telaGerente(id)
+                    Sistema.telaGerente(id) #inicia o menu gerente para o objeto o resgatando pelo id
                     
                 
             elif r == '2':
@@ -288,13 +290,13 @@ class Telas(Sistema):
                 Consultor.criarConsulor()
             elif r == '4':
                 nome = input('Qual o user do gerente a ser removido: ')
-                for i in Sistema.logDados['Gerentes']:
+                for i in Main.logDados['Gerentes']:
                     if i.user == nome:
                         cls =i
                 cls.removerGerente()
             elif r == '5':
                 nome = input('Qual o user do consultor a ser removido: ')
-                for i in Sistema.logDados['Consultores']:
+                for i in Main.logDados['Consultores']:
                     if i.user == nome:
                         cls =i
                 cls.removerConsultor()
@@ -302,16 +304,16 @@ class Telas(Sistema):
                 Projeto.criarProjeto()
             elif r=='7':
                 nome = input('Qual o nome do projeto a ser removido: ')
-                for i in Sistema.logDados['Projetos']:
+                for i in Main.logDados['Projetos']:
                     if i.nome == nome:
                         cls =i
                 cls.removerProjeto()
             elif r=='9':
-                Sistema.sairPrograma()
+                Main.sairPrograma()
             elif r=='8':
-                Sistema.listar()
+                Main.listar()
     def telaConsultor(id):
-        for i in Sistema.logDados['Consultores']:
+        for i in Main.logDados['Consultores']:
             if i.id == id:
                 cls = i
         while True:
@@ -342,9 +344,9 @@ class Telas(Sistema):
             if r=='5':
                 cls.pedirRetirada()
             if r=='6':
-                Telas.menuPrincipal()
+                Sistema.menuPrincipal()
     def telaGerente(id):
-        for i in Sistema.logDados['Gerentes']:
+        for i in Main.logDados['Gerentes']:
             if i.id == id:
                 cls = i
         while True:
@@ -381,10 +383,9 @@ class Telas(Sistema):
             if r=='7':
                 cls.entregarProjeto()
             if r=='8':
-                Telas.menuPrincipal()
+                Sistema.menuPrincipal()
 
-def main():
-    Telas.menuPrincipal()
 
-main()
+Sistema.menuPrincipal()
+
 
